@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#0a0d0b"/>
+  <g stroke="#7dffb0" stroke-width="3.6" stroke-linecap="round" fill="none">
+    <!-- pins -->
+    <path d="M28 10v11M36 10v11M28 43v11M36 43v11M10 28h11M10 36h11M43 28h11M43 36h11"/>
+    <!-- package -->
+    <rect x="21" y="21" width="22" height="22" rx="4.5" fill="#0f1a13"/>
+  </g>
+  <!-- signal dot -->
+  <circle cx="32" cy="32" r="4.2" fill="#ffc46b"/>
+</svg>

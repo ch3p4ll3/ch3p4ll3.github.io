@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mattia Vidoni — Backend dev &amp; embedded tinkerer</title>
+  <meta name="description" content="Portfolio of Mattia Vidoni (ch3p4ll3): backend developer building APIs, a DIY triaxial seismograph, ESP32 firmware, ham radio tools and a 35-container homelab.">
+  <meta name="theme-color" content="#0a0d0b">
+  <meta property="og:title" content="Mattia Vidoni — Backend dev &amp; embedded tinkerer">
+  <meta property="og:description" content="APIs, seismographs, ESP32 firmware, ham radio and homelab. Projects by ch3p4ll3.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/37929258?v=4&s=400">
+  <link rel="icon" href="./imgs/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#top" aria-label="Home"><span class="brand-dot"></span>ch3p4ll3</a>
+    <nav aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#homelab">Homelab</a>
+      <a href="#skills">Skills</a>
+      <a href="#bench">On the bench</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light/dark theme">
+      <span aria-hidden="true">◐</span>
+    </button>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <canvas id="trace" aria-hidden="true"></canvas>
+      <div class="hero-inner">
+        <p class="eyebrow mono">Mattia Vidoni · north-east Italy</p>
+        <h1>I build APIs by day, and <em>firmware</em> by night.</h1>
+        <p class="lead">Backend developer who spends most of the time building APIs, automating things and arguing with databases. Outside work: ESP32 firmware, a home-built triaxial seismograph, ham radio and a homelab that has been running for over a decade.</p>
+        <div class="cta">
+          <a class="btn primary" href="#projects">See the projects</a>
+          <a class="btn" href="https://github.com/ch3p4ll3" target="_blank" rel="noopener">GitHub profile ↗</a>
+        </div>
+        <dl class="stats">
+          <div><dt>Public repos</dt><dd id="statRepos" data-fallback="50">50</dd></div>
+          <div><dt>Top repo stars</dt><dd id="statStars" data-fallback="105">105</dd></div>
+          <div><dt>Homelab running</dt><dd>10+ yrs</dd></div>
+          <div><dt>Self-hosted containers</dt><dd>~35</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <div class="section-head">
+        <p class="eyebrow mono">01 / About</p>
+        <h2>Backend first, hardware always</h2>
+      </div>
+      <div class="about-grid">
+        <div class="prose">
+          <p>By trade I work on backend software for industrial rolling-mill systems: C#, API design and database modeling. When the code drives heavy machinery, “it works on my machine” is not enough.</p>
+          <p>On my own time I follow the signal down to the hardware. I designed a triaxial seismograph around GD-4.5 geophones, wrote the acquisition daemon, the archive API and the live dashboard, and I keep recording local earthquakes with it. Around that: ESP32 and Arduino firmware, an antenna rotator for satellite passes, and tools for radiosonde hunters.</p>
+          <p>Due to my job, lately I am also learning PLC programming on Siemens TIA Portal V19 (the basics, in LAD and SCL). I also used to scan the sky for weather-satellite images: NOAA APT (RIP), Meteor LRPT on VHF, and on L-band Meteor HRPT, Metop AHRPT and Elektro-L LRIT.</p>
+          <p>Frontend is the part I am still learning to write &ldquo;without emotional damage&rdquo;, but Angular pages do ship, and they usually work.</p>
+        </div>
+        <ul class="facts">
+          <li><span class="mono">Day job</span>C# backend · APIs · DB modeling</li>
+          <li><span class="mono">Hobbies</span>Seismology · ham radio · SDR · photography · nature</li>
+          <li><span class="mono">Languages</span>Italian, English</li>
+          <li><span class="mono">Open source</span>Author of QBittorrentBot</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FEATURED -->
+    <section class="section" id="projects">
+      <div class="section-head">
+        <p class="eyebrow mono">02 / Projects</p>
+        <h2>Things I built</h2>
+      </div>
+
+      <article class="featured reveal">
+        <div class="featured-top">
+          <div>
+            <p class="eyebrow mono accent2">Featured · open source · GPL-3.0</p>
+            <h3>rpi-seism: an open-source 3-axis seismograph</h3>
+          </div>
+          <div class="links">
+            <a class="chip-link" href="https://rpi-seism.github.io" target="_blank" rel="noopener">Docs ↗</a>
+            <a class="chip-link" href="https://github.com/rpi-seism/stack" target="_blank" rel="noopener">Stack ↗</a>
+            <a class="chip-link" href="https://github.com/rpi-seism" target="_blank" rel="noopener">Org ↗</a>
+          </div>
+        </div>
+        <p>A proof-of-concept seismograph for local monitoring in an earthquake-prone area. Three GD-4.5 geophones feed an ADS1256 ADC read by an Arduino; data travels over RS-485 to a Raspberry Pi, and comes out as MiniSEED archives and a live dashboard. One <code>docker compose up</code> deploys the software side.</p>
+
+        <ol class="pipeline" aria-label="rpi-seism data pipeline">
+          <li><b>3 x GD-4.5</b><span>geophones, 4.5 Hz</span></li>
+          <li><b>ADC</b><span>ADS1256 24-bit</span></li>
+          <li><b>RS-485</b><span>differential link over Cat5/6</span></li>
+          <li><b>Pi daemon</b><span>Python · ObsPy · ZeroMQ</span></li>
+          <li><b>Outputs</b><span>MiniSEED/SDS · WebSocket · SeedLink · alerts</span></li>
+        </ol>
+
+        <div class="feat-cols">
+          <div>
+            <h4 class="mono">Firmware</h4>
+            <p>Arduino-class C++ with a 16-byte checksummed packet format, runtime-configurable sampling rate, gain and data rate, built with PlatformIO across AVR, RP2040, STM32, ESP32 and Teensy.</p>
+          </div>
+          <div>
+            <h4 class="mono">Daemon</h4>
+            <p>Threaded acquisition: reader, MiniSEED writer, WebSocket sender, STA/LTA trigger, Apprise notifications and a ringserver feed, with health tracking of link quality.</p>
+          </div>
+          <div>
+            <h4 class="mono">API &amp; web</h4>
+            <p>FastAPI archive with server-side FFT and spectrograms; Angular + PrimeNG + Tailwind dashboard with live traces, bookmarks and waveform export.</p>
+          </div>
+        </div>
+        <p class="note">Recorded so far without external amplification: the Verzegnis swarm, events near Moggio Udinese and Lusevera, and two events in Slovenia/Croatia.</p>
+      </article>
+
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button class="filter active" data-filter="all" type="button">All</button>
+        <button class="filter" data-filter="embedded" type="button">Embedded</button>
+        <button class="filter" data-filter="backend" type="button">Backend</button>
+        <button class="filter" data-filter="radio" type="button">Radio &amp; science</button>
+        <button class="filter" data-filter="web" type="button">Web</button>
+      </div>
+
+      <div class="grid" id="grid">
+        <article class="card reveal" data-tags="backend" data-repo="QBittorrentBot">
+          <header><h3>QBittorrentBot</h3><span class="lang mono">Python</span></header>
+          <p>Control qBittorrent from Telegram: add magnet links or torrent files, list active downloads, pause, resume and delete.</p>
+          <footer>
+            <span class="meta mono">★ <b data-stars>105</b> · ⑂ <b data-forks>35</b></span>
+            <a href="https://github.com/ch3p4ll3/QBittorrentBot" target="_blank" rel="noopener">Repo ↗</a>
+          </footer>
+          <p class="status">Community-maintained · PRs welcome</p>
+        </article>
+
+        <article class="card reveal" data-tags="embedded" data-repo="ACUDP">
+          <header><h3>ACUDP</h3><span class="lang mono">C++</span></header>
+          <p>Library for ESP32 that receives Assetto Corsa telemetry over UDP, for building sim-racing dashboards and gadgets.</p>
+          <footer>
+            <span class="meta mono">★ <b data-stars>19</b> · ⑂ <b data-forks>1</b></span>
+            <a href="https://github.com/ch3p4ll3/ACUDP" target="_blank" rel="noopener">Repo ↗</a>
+          </footer>
+        </article>
+
+        <article class="card reveal" data-tags="embedded" data-repo="ESP-Intervallometer">
+          <header><h3>ESP-Intervallometer</h3><span class="lang mono">C++</span></header>
+          <p>DSLR trigger on an ESP32: a BLE GATT server with a web UI to fire the shutter, run bulb exposures and intervalometer sequences.</p>
+          <footer>
+            <span class="meta mono">★ <b data-stars>14</b> · ⑂ <b data-forks>2</b></span>
+            <a href="https://github.com/ch3p4ll3/ESP-Intervallometer" target="_blank" rel="noopener">Repo ↗</a>
+          </footer>
+        </article>
+
+        <article class="card reveal" data-tags="radio backend" data-repo="radiosonde_auto_rx_notifier">
+          <header><h3>radiosonde_auto_rx_notifier</h3><span class="lang mono">Python</span></header>
+          <p>Listens to radiosonde telemetry and sends real-time notifications when a weather balloon is near your location.</p>
+          <footer>
+            <span class="meta mono">★ <b data-stars>9</b> · ⑂ <b data-forks>3</b></span>
+            <a href="https://github.com/ch3p4ll3/radiosonde_auto_rx_notifier" target="_blank" rel="noopener">Repo ↗</a>
+          </footer>
+        </article>
+
+        <article class="card reveal" data-tags="embedded web" data-repo="espnow-car">
+          <header><h3>espnow-car</h3><span class="lang mono">C++ · TypeScript</span></header>
+          <p>An RC car driven by another ESP over ESP-NOW, so no router is needed. Split into three repos: the car firmware, a hardware controller, and a web app.</p>
+          <footer>
+            <span class="meta mono">ESP-NOW</span>
+            <span class="repo-links">
+              <a href="https://github.com/ch3p4ll3/espnow-car" target="_blank" rel="noopener">Car ↗</a>
+              <a href="https://github.com/ch3p4ll3/espnow-car-controller" target="_blank" rel="noopener">Controller ↗</a>
+              <a href="https://github.com/ch3p4ll3/espnow-car-web" target="_blank" rel="noopener">Web ↗</a>
+            </span>
+          </footer>
+        </article>
+
+        <article class="card reveal" data-tags="embedded" data-repo="esp-gear-indicator">
+          <header><h3>esp-gear-indicator</h3><span class="lang mono">C++</span></header>
+          <p>An ESP-based gear indicator for your car, reading its data from a Bluetooth OBD-II adapter.</p>
+          <footer>
+            <span class="meta mono">★ <b data-stars>1</b> · OBD-II</span>
+            <a href="https://github.com/ch3p4ll3/esp-gear-indicator" target="_blank" rel="noopener">Repo ↗</a>
+          </footer>
+        </article>
+
+        <article class="card reveal" data-tags="backend" data-repo="Cisco-SG-200-port-leds">
+          <header><h3>Cisco-SG-200-port-leds</h3><span class="lang mono">Python</span></header>
+          <p>A Selenium script that switches the port LEDs of a Cisco SG200 switch on and off, written for the switch in my home rack.</p>
+          <footer>
+            <span class="meta mono">Selenium · homelab</span>
+            <a href="https://github.com/ch3p4ll3/Cisco-SG-200-port-leds" target="_blank" rel="noopener">Repo ↗</a>
+          </footer>
+        </article>
+
+        <article class="card reveal" data-tags="embedded backend" data-repo="project-silos">
+          <header><h3>project-silos</h3><span class="lang mono">Python</span></header>
+          <p>School project on managing silos with IoT protocols. The silos report temperature, humidity and level, and accept fill and empty commands, all over MQTT. I built a working prototype with an ESP32 talking to the app.</p>
+          <footer>
+            <span class="meta mono">★ <b data-stars>1</b> · MQTT · ESP32</span>
+            <a href="https://github.com/ch3p4ll3/project-silos" target="_blank" rel="noopener">Repo ↗</a>
+          </footer>
+          <p class="status">School project</p>
+        </article>
+
+        <article class="card reveal" data-tags="embedded radio">
+          <header><h3>Antenna rotator controller</h3><span class="lang mono">C++</span></header>
+          <p>ESP32 azimuth/elevation controller for a Yagi, speaking EasyComm II so GPredict and Hamlib's rotctld can track satellites. PID motor control, encoder feedback, limit switches, USB and RS-485 variants, serial OTA.</p>
+          <footer>
+            <span class="meta mono">FreeRTOS · PlatformIO</span>
+          </footer>
+        </article>
+
+        <article class="card reveal" data-tags="web radio">
+          <header><h3>ARISS SSTV submission platform</h3><span class="lang mono">Angular</span></header>
+          <p>Web platform for submitting and managing slow-scan TV images received from the ISS. Chunked uploads, EXIF extraction, SSTV validation, planned ISS-pass correlation with satellite.js and OCR callsign detection.</p>
+          <footer>
+            <span class="meta mono">Signals · Tailwind</span>
+          </footer>
+        </article>
+      </div>
+    </section>
+
+    <!-- HOMELAB -->
+    <section class="section" id="homelab">
+      <div class="section-head">
+        <p class="eyebrow mono">03 / Homelab</p>
+        <h2>Self-hosting as a lifestyle (and a budget strategy)</h2>
+      </div>
+      <div class="lab-grid">
+        <div class="prose">
+          <p>Self-hosting has been my hobby for over ten years, and these days it’s partly powered by the sun. About 35 containers in 20 Docker Compose stacks run on a small ThinkCentre (Ubuntu LTS), managed with Ansible through Semaphore UI and housed in a 12U rack. Traefik routes the traffic and Authentik handles sign-in, with AdGuard Home for DNS filtering. The services themselves range from Paperless-ngx and Jellyfin to Syncthing and code-server, with Backrest taking the backups and Beszel and WatchYourLAN doing the monitoring.</p>
+          <p>To reach it from outside, I use WireGuard in a hub-and-spoke setup from a VPS, with Tailscale alongside. Inside the house, Home Assistant connects Zigbee2MQTT, ESPHome, a Modbus solar inverter and the 3D printer into one dashboard, and a small container even turns off the switch LEDs at night.</p>
+        </div>
+        <div class="tags">
+          <span>Docker Compose</span><span>Ansible</span><span>Semaphore UI</span><span>Traefik</span><span>Authentik</span><span>AdGuard Home</span><span>WireGuard</span><span>Tailscale</span><span>Paperless-ngx</span><span>Jellyfin</span><span>Syncthing</span><span>Backrest</span><span>code-server</span><span>Beszel</span><span>WatchYourLAN</span><span>Homepage</span><span>Home Assistant</span><span>Zigbee2MQTT</span><span>ESPHome</span><span>Klipper</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+        <section class="section" id="skills">
+      <div class="section-head">
+        <p class="eyebrow mono">04 / Skills</p>
+        <h2>Toolbox</h2>
+      </div>
+      <div class="skills">
+        <div><h3 class="mono">Backend</h3><ul><li>Python</li><li>C++</li><li>C# / .NET</li><li>FastAPI</li><li>Django</li><li>asyncio · ZeroMQ</li></ul></div>
+        <div><h3 class="mono">Data</h3><ul><li>PostgreSQL</li><li>SQL Server</li><li>SQLite</li><li>SQLAlchemy · SQLModel</li><li>ObsPy · MiniSEED</li></ul></div>
+        <div><h3 class="mono">Embedded</h3><ul><li>Arduino · PlatformIO</li><li>FreeRTOS</li><li>RS-485 · CAN</li><li>PCB &amp; ADC interfacing</li></ul></div>
+        <div><h3 class="mono">Industrial</h3><ul><li>Siemens PLC · TIA Portal V19</li><li>LAD · SCL (learning)</li><li>OPC UA</li></ul></div>
+        <div><h3 class="mono">Frontend</h3><ul><li>Angular · TypeScript</li><li>JavaScript</li><li>PrimeNG · Tailwind</li><li>Bootstrap</li></ul></div>
+        <div><h3 class="mono">Ops &amp; tools</h3><ul><li>Docker</li><li>Ansible</li><li>Git</li><li>JetBrains IDEs</li><li>Linux</li></ul></div>
+        <div><h3 class="mono">RF</h3><ul><li>Ham radio · SDR</li><li>HF propagation</li><li>Satellite tracking</li><li>Weather-sat imagery: APT · LRPT · HRPT · AHRPT · LRIT</li><li>Hamlib · rotctld</li></ul></div>
+      </div>
+    </section>
+
+    <!-- ON THE BENCH -->
+    <section class="section" id="bench">
+      <div class="section-head">
+        <p class="eyebrow mono">05 / On the bench</p>
+        <h2>What I am poking at right now</h2>
+      </div>
+      <ul class="bench">
+        <li><b>Fuel level over CAN.</b> Reading the comfort bus of a 2011 Peugeot 207 with an ESP32.</li>
+        <li><b>Rack upgrades.</b> Fan control with ESPHome and a tidier cable layout, with an OPNsense firewall and a JetKVM on the wish list.</li>
+      </ul>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section contact" id="contact">
+      <div class="section-head">
+        <p class="eyebrow mono">06 / Contact</p>
+        <h2>Say hi, or send a PR</h2>
+      </div>
+      <p class="lead">The best way to reach me is through GitHub: open an issue, start a discussion or send a pull request.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/ch3p4ll3" target="_blank" rel="noopener">github.com/ch3p4ll3 ↗</a>
+        <a class="btn" href="https://github.com/rpi-seism" target="_blank" rel="noopener">github.com/rpi-seism ↗</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span class="mono">© <span id="year">2026</span> Mattia Vidoni</span>
+  </footer>
+
+  <script src="scripts/script.js" defer></script>
+</body>
+</html>
