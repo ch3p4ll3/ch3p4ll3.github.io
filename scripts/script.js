@@ -17,6 +17,30 @@
 
   document.getElementById("year").textContent = new Date().getFullYear();
 
+  /* MOBILE MENU */
+  var nav = document.querySelector(".nav");
+  var navToggle = document.getElementById("navToggle");
+  function setMenu(open) {
+    nav.classList.toggle("open", open);
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+  navToggle.addEventListener("click", function () {
+    setMenu(!nav.classList.contains("open"));
+  });
+  document.querySelectorAll("#primaryNav a").forEach(function (a) {
+    a.addEventListener("click", function () { setMenu(false); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && nav.classList.contains("open")) { setMenu(false); navToggle.focus(); }
+  });
+  document.addEventListener("click", function (e) {
+    if (nav.classList.contains("open") && !nav.contains(e.target)) setMenu(false);
+  });
+  window.matchMedia("(min-width: 641px)").addEventListener("change", function (m) {
+    if (m.matches) setMenu(false);
+  });
+
   /* FILTERS */
   var cards = Array.prototype.slice.call(document.querySelectorAll("#grid .card"));
   var buttons = document.querySelectorAll(".filter");
@@ -155,7 +179,10 @@
     ctx.globalAlpha = 1;
   }
 
+  var running = false, visible = true;
+
   function frame() {
+    if (!visible || document.hidden) { running = false; return; }
     for (var i = 0; i < traces.length; i++) {
       var tr = traces[i];
       tr.t += tr.speed;
@@ -165,7 +192,28 @@
     requestAnimationFrame(frame);
   }
 
+  function start() {
+    if (reduce || running || !visible || document.hidden) return;
+    running = true;
+    requestAnimationFrame(frame);
+  }
+
   size();
-  window.addEventListener("resize", size);
-  if (!reduce) requestAnimationFrame(frame);
+
+  // Only rebuild on width changes: mobile browsers fire resize whenever the
+  // address bar shows/hides, which would reshuffle the traces while scrolling.
+  var lastW = canvas.clientWidth;
+  window.addEventListener("resize", function () {
+    if (canvas.clientWidth !== lastW) { lastW = canvas.clientWidth; size(); }
+  });
+
+  // Pause the animation when the hero is off screen or the tab is hidden (saves battery on phones).
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      if (visible) start();
+    }).observe(canvas);
+  }
+  document.addEventListener("visibilitychange", start);
+  start();
 })();

@@ -11,7 +11,7 @@
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://avatars.githubusercontent.com/u/37929258?v=4&s=400">
   <link rel="icon" href="./imgs/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="./imgs/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
 <body>
   <header class="nav">
     <a class="brand" href="#top" aria-label="Home"><span class="brand-dot"></span>ch3p4ll3</a>
-    <nav aria-label="Primary">
+    <nav id="primaryNav" aria-label="Primary">
       <a href="#about">About</a>
       <a href="#projects">Projects</a>
       <a href="#homelab">Homelab</a>
@@ -30,6 +30,9 @@
     </nav>
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light/dark theme">
       <span aria-hidden="true">◐</span>
+    </button>
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
+      <span></span><span></span><span></span>
     </button>
   </header>
 
@@ -214,14 +217,6 @@
           <p>ESP32 azimuth/elevation controller for a Yagi, speaking EasyComm II so GPredict and Hamlib's rotctld can track satellites. PID motor control, encoder feedback, limit switches, USB and RS-485 variants, serial OTA.</p>
           <footer>
             <span class="meta mono">FreeRTOS · PlatformIO</span>
-          </footer>
-        </article>
-
-        <article class="card reveal" data-tags="web radio">
-          <header><h3>ARISS SSTV submission platform</h3><span class="lang mono">Angular</span></header>
-          <p>Web platform for submitting and managing slow-scan TV images received from the ISS. Chunked uploads, EXIF extraction, SSTV validation, planned ISS-pass correlation with satellite.js and OCR callsign detection.</p>
-          <footer>
-            <span class="meta mono">Signals · Tailwind</span>
           </footer>
         </article>
       </div>
