@@ -3,70 +3,146 @@
   var root = document.documentElement;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* THEME */
+  /* THEME — dark is the default; the light palette is a deliberate, readable alternative. */
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+  var themeButton = document.getElementById("themeToggle");
+  var PALETTES = {
+    dark: { line: "#24314B", accent: "#FBBF24", bg: "#070A12" },
+    light: { line: "#DBDFE3", accent: "#B45309", bg: "#F7F7F4" }
+  };
+
+  function isDark() { return root.classList.contains("dark"); }
   function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
-  var saved = safeGet("theme");
-  if (saved) root.setAttribute("data-theme", saved);
-  else if (window.matchMedia("(prefers-color-scheme: light)").matches) root.setAttribute("data-theme", "light");
-  document.getElementById("themeToggle").addEventListener("click", function () {
-    var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    root.setAttribute("data-theme", next);
-    safeSet("theme", next);
+
+  function syncThemeButton() {
+    var next = isDark() ? "light" : "dark";
+    themeButton.setAttribute("aria-label", "Switch to " + next + " theme");
+    if (themeMeta) themeMeta.setAttribute("content", PALETTES[isDark() ? "dark" : "light"].bg);
+  }
+
+  function setTheme(theme) {
+    root.classList.toggle("dark", theme === "dark");
+    root.setAttribute("data-theme", theme);
+    safeSet("theme", theme);
+    syncThemeButton();
+    if (typeof draw === "function") draw();
+  }
+
+  syncThemeButton();
+  themeButton.addEventListener("click", function () {
+    setTheme(isDark() ? "light" : "dark");
   });
 
   document.getElementById("year").textContent = new Date().getFullYear();
 
   /* MOBILE MENU */
-  var nav = document.querySelector(".nav");
+  var nav = document.getElementById("primaryNav");
   var navToggle = document.getElementById("navToggle");
+  var menuIcon = document.getElementById("menuIcon");
+  var closeIcon = document.getElementById("closeIcon");
+
   function setMenu(open) {
-    nav.classList.toggle("open", open);
+    nav.classList.toggle("hidden", !open);
+    nav.classList.toggle("flex", open);
     navToggle.setAttribute("aria-expanded", open ? "true" : "false");
     navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    menuIcon.classList.toggle("hidden", open);
+    closeIcon.classList.toggle("hidden", !open);
   }
+
   navToggle.addEventListener("click", function () {
-    setMenu(!nav.classList.contains("open"));
+    setMenu(nav.classList.contains("hidden"));
   });
   document.querySelectorAll("#primaryNav a").forEach(function (a) {
     a.addEventListener("click", function () { setMenu(false); });
   });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && nav.classList.contains("open")) { setMenu(false); navToggle.focus(); }
+    if (e.key === "Escape" && !nav.classList.contains("hidden")) {
+      setMenu(false);
+      navToggle.focus();
+    }
   });
   document.addEventListener("click", function (e) {
-    if (nav.classList.contains("open") && !nav.contains(e.target)) setMenu(false);
+    if (!nav.classList.contains("hidden") && !nav.contains(e.target) && !navToggle.contains(e.target)) setMenu(false);
   });
-  window.matchMedia("(min-width: 641px)").addEventListener("change", function (m) {
+  window.matchMedia("(min-width: 768px)").addEventListener("change", function (m) {
     if (m.matches) setMenu(false);
   });
 
-  /* FILTERS */
+  /* ACTIVE SECTION IN NAV */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll("#primaryNav a"));
+  var sections = navLinks
+    .map(function (a) { return document.querySelector(a.getAttribute("href")); })
+    .filter(Boolean);
+
+  if ("IntersectionObserver" in window) {
+    var sectionObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach(function (a) {
+          if (a.getAttribute("href") === "#" + entry.target.id) a.setAttribute("aria-current", "page");
+          else a.removeAttribute("aria-current");
+        });
+      });
+    }, { rootMargin: "-25% 0px -65% 0px" });
+    sections.forEach(function (s) { sectionObserver.observe(s); });
+  }
+
+  /* PROJECT FILTERS */
   var cards = Array.prototype.slice.call(document.querySelectorAll("#grid .card"));
-  var buttons = document.querySelectorAll(".filter");
+  var buttons = Array.prototype.slice.call(document.querySelectorAll(".filter"));
+  var filterStatus = document.getElementById("filterStatus");
+
   buttons.forEach(function (btn) {
     btn.addEventListener("click", function () {
-      buttons.forEach(function (b) { b.classList.remove("active"); });
-      btn.classList.add("active");
-      var f = btn.getAttribute("data-filter");
+      var filter = btn.getAttribute("data-filter");
+      buttons.forEach(function (b) {
+        var active = b === btn;
+        b.setAttribute("aria-pressed", active ? "true" : "false");
+        b.classList.toggle("bg-amber-600", active);
+        b.classList.toggle("text-white", active);
+        b.classList.toggle("dark:bg-amber-400", active);
+        b.classList.toggle("dark:text-ink-950", active);
+        b.classList.toggle("border-slate-300", !active);
+        b.classList.toggle("text-slate-600", !active);
+        b.classList.toggle("dark:border-ink-600", !active);
+        b.classList.toggle("dark:text-slate-300", !active);
+      });
+
+      var shown = 0;
       cards.forEach(function (c) {
         var tags = (c.getAttribute("data-tags") || "").split(" ");
-        c.hidden = !(f === "all" || tags.indexOf(f) !== -1);
+        var visible = filter === "all" || tags.indexOf(filter) !== -1;
+        c.hidden = !visible;
+        // Tailwind's display utilities can override the browser's [hidden] rule,
+        // so mirror the state with the `hidden` utility as well.
+        c.classList.toggle("hidden", !visible);
+        if (visible) shown++;
       });
+      filterStatus.textContent = filter === "all"
+        ? "Showing all " + shown + " projects"
+        : "Showing " + shown + " " + (shown === 1 ? "project" : "projects") + " in " + btn.textContent.trim().replace(/\d+$/, "").trim();
     });
   });
 
-  /* REVEAL ON SCROLL */
-  var items = document.querySelectorAll(".reveal");
+  /* REVEAL ON SCROLL — toggles Tailwind utilities, no custom CSS needed. */
+  var revealItems = document.querySelectorAll("[data-reveal]");
   if ("IntersectionObserver" in window && !reduce) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+        if (!e.isIntersecting) return;
+        e.target.classList.add("opacity-100", "translate-y-0");
+        e.target.classList.remove("opacity-0", "translate-y-4");
+        io.unobserve(e.target);
       });
-    }, { threshold: 0.12 });
-    items.forEach(function (el) { io.observe(el); });
+    }, { threshold: 0.1 });
+    revealItems.forEach(function (el) { io.observe(el); });
   } else {
-    items.forEach(function (el) { el.classList.add("in"); });
+    revealItems.forEach(function (el) {
+      el.classList.add("opacity-100", "translate-y-0");
+      el.classList.remove("opacity-0", "translate-y-4");
+    });
   }
 
   /* LIVE GITHUB NUMBERS (falls back silently to the static values in the HTML) */
@@ -97,7 +173,6 @@
   var DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 
   function rand(a, b) { return a + Math.random() * (b - a); }
-  function color(name) { return getComputedStyle(root).getPropertyValue(name).trim(); }
 
   function buildTrace() {
     var x = Math.round(rand(0, w) / G) * G;
@@ -141,12 +216,12 @@
 
   function draw() {
     ctx.clearRect(0, 0, w, h);
-    var accent = color("--accent"), line = color("--line-solid");
+    var palette = PALETTES[isDark() ? "dark" : "light"];
     var i, j, tr;
 
     ctx.lineWidth = 1.2;
     ctx.lineJoin = "round";
-    ctx.strokeStyle = line;
+    ctx.strokeStyle = palette.line;
     ctx.globalAlpha = 0.9;
     for (i = 0; i < traces.length; i++) {
       tr = traces[i];
@@ -154,7 +229,6 @@
       ctx.moveTo(tr.pts[0][0], tr.pts[0][1]);
       for (j = 1; j < tr.pts.length; j++) ctx.lineTo(tr.pts[j][0], tr.pts[j][1]);
       ctx.stroke();
-      // solder pads at both ends
       var ends = [tr.pts[0], tr.pts[tr.pts.length - 1]];
       for (j = 0; j < 2; j++) {
         ctx.beginPath();
@@ -163,7 +237,7 @@
       }
     }
 
-    ctx.fillStyle = accent;
+    ctx.fillStyle = palette.accent;
     for (i = 0; i < traces.length; i++) {
       tr = traces[i];
       for (j = 0; j < TAIL; j++) {
